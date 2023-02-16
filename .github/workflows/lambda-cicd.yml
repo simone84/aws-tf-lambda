@@ -9,6 +9,9 @@ on:
       - 'scripts/**'
       - 'policies/**'
       - 'modules/**'
+    inputs:
+      environment:
+        default: dev
   workflow_dispatch:
     inputs:
       environment:
