@@ -2,7 +2,7 @@
 
 set -e
 
-TFSTATE_KEY=$envx/terraform.tfstate
+TFSTATE_KEY=$envx/terraform-lambda.state
 wget https://releases.hashicorp.com/terraform/${tfversion}/terraform_${tfversion}_linux_amd64.zip
 unzip terraform_${tfversion}_linux_amd64.zip
 echo "########## TF INIT ##########"  
