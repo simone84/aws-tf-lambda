@@ -8,12 +8,13 @@ on:
     #   - 'env/dev/**'
   workflow_dispatch:
     inputs:
-      type: choice
-      description: environment
-      default: dev
-      options:
-      - dev
-      - test
+      environment:
+        type: choice
+        description: environment
+        default: dev
+        options:
+        - dev
+        - test
 
 jobs:
   lambda-with-terraform:
@@ -28,7 +29,7 @@ jobs:
         bucket: ${{ secrets.bucket }}
         region: ${{ secrets.region }}
         tf_version: "1.3.6"
-        envx: ${{ github.event.inputs.envx }}
+        envx: ${{ inputs.environment }}
       run: |
         cd env/$envx
         export envx=$envx
