@@ -34,9 +34,11 @@ module.lambda-instances_id.aws_lambda_function.ondemand
 
 The name of the role and the function will be:
 
+```
 lambdaRole_${env}_${lambda_name}
 
 ${env}_${lambda_name}
+```
 
 ### EXTRA: ###
 - The policy won't be available for additional resources being inline and built in the role
