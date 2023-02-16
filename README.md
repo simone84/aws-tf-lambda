@@ -38,3 +38,40 @@ ${env}_${lambda_name}
 - [X] Building script to generate the tf code automatically
 
 ### CUSTOMISATION: ###
+```
+!!! Every modify in the module or TFVAR can affect all the functions in each environment !!!
+```
+- Module Calling (to customise a lambda only)
+
+| Parameter   | Required | Default Value | Description                         |
+| ----------- | -------- | ------------- | ----------------------------------- |
+| env         | true     | null          | set only on the tfvars              |
+| lambda_name | true     | null          | read naming convention rules        |
+| python_v    | true     | null          | setup only if different from tfvars |
+| timeout     | false    | 10            | lambda timeout                      |
+
+- TFVARS (to customise an entire environment)
+
+| Parameter  | Required | Default Value | Description                             |
+| ---------- | -------- | ------------- | --------------------------------------- |
+| env        | true     | null          | give the prefix on role and lambda name |
+| aws_region | true     | null          | region where build resources            |
+| python_v   | true     | null          | python version                          |
+
+- GH Workflow (to setup/customise the shared workflow)
+
+| Input       | Required | Default Value | Description                             |
+| ----------- | -------- | ------------- | --------------------------------------- |
+| environment | true     | dev           | pull and update the right tf state file |
+
+* to update the TF Varsion amend the env var "tf_version"
+* to update the env list amend the choise list
+
+- GH Secrets
+
+| Secret                | Required | Description          |
+| --------------------- | -------- | -------------------- |
+| aws_access_key_id     | true     | aws key_id           |
+| aws_secret_access_key | true     | aws secret_key       |
+| bucket                | true     | s3 bucket state file |
+| region                | true     | s3 bucket region     |
