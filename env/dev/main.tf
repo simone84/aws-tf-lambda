@@ -13,11 +13,7 @@ provider "aws" {
 }
 
 terraform {
-  backend "s3" {
-    bucket = "infra984"
-    key    = "dev/terraform-lambda.state"
-    region = "eu-west-2"
-      
+  backend "s3" {  
   }
 }
 
