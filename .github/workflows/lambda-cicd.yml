@@ -1,0 +1,41 @@
+name: "Lambda CICD"
+
+on:
+  # push:
+    # branches:
+    #   - main
+    # paths:
+    #   - 'env/dev/**'
+  workflow_dispatch:
+    inputs:
+      type: choice
+      description: environment
+      default: dev
+      options:
+      - dev
+      - test
+
+jobs:
+  lambda-with-terraform:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v3
+    - name: Update and Build Lambda Functions
+      env:
+        aws_access_key_id: ${{ secrets.aws_access_key_id }}
+        aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
+        bucket: ${{ secrets.bucket }}
+        region: ${{ secrets.region }}
+        tf_version: "1.3.6"
+        envx: ${{ github.event.inputs.envx }}
+      run: |
+        cd env/$envx
+        export envx=$envx
+        export bucket=$bucket
+        export region=$region
+        export AWS_ACCESS_KEY_ID=$aws_access_key_id
+        export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key
+        export tfversion=$tf_version
+        cp -p ../../tf_script.sh .
+        ./tf_script.sh
