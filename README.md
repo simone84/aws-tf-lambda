@@ -12,6 +12,16 @@ terraform init
 terraform plan -var-file=../../tfvars/dev.tfvars
 ```
 - PR, get it approved and merge on the main branch
+- The Action will run automatically for dev modifies
+```
+Modifies on the following path will make the workflow run automatically:
+
+- 'env/dev/**'
+- 'scripts/**'
+- 'policies/**'
+- 'modules/**'
+```
+
 - Apply the change running the action selecting the environemnt
 
 ### After the build: ###
