@@ -36,7 +36,7 @@ jobs:
         tf_version: "1.3.6"
         envx: ${{ inputs.environment }}
       run: |
-        if [ -z "$envx" ]; then envx=dev
+        if [ -z "$envx" ]; then envx=dev ; fi
         cd env/$envx
         echo $
         export envx=$envx
