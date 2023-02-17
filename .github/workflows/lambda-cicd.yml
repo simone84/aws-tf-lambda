@@ -12,6 +12,7 @@ on:
     inputs:
       environment:
         default: dev
+        required: true
   workflow_dispatch:
     inputs:
       environment:
