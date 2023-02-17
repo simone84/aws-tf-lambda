@@ -35,10 +35,8 @@ jobs:
         region: ${{ secrets.region }}
         tf_version: "1.3.6"
         envx: ${{ inputs.environment }}
-      if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
-      env:
-        envx: dev
       run: |
+        if [ -z "$envx" ]; then envx=dev
         cd env/$envx
         echo $
         export envx=$envx
