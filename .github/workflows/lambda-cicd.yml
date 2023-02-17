@@ -19,7 +19,7 @@ on:
         type: choice
         description: environment
         default: dev
-        required: tru
+        required: true
         options:
         - dev
         - test
