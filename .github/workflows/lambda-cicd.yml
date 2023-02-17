@@ -10,8 +10,8 @@ on:
       - 'policies/**'
       - 'modules/**'
     inputs:
-      environment:
-        default: dev
+      environment: dev
+        # default: dev
   workflow_dispatch:
     inputs:
       environment:
@@ -38,6 +38,7 @@ jobs:
         envx: ${{ inputs.environment }}
       run: |
         cd env/$envx
+        echo $
         export envx=$envx
         export bucket=$bucket
         export region=$region
