@@ -10,8 +10,8 @@ on:
       - 'policies/**'
       - 'modules/**'
     inputs:
-      environment: dev
-        # default: dev
+      environment:
+        default: dev
   workflow_dispatch:
     inputs:
       environment:
