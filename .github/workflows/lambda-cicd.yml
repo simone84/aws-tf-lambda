@@ -9,6 +9,7 @@ on:
       - 'scripts/**'
       - 'policies/**'
       - 'modules/**'
+
   workflow_dispatch:
     inputs:
       environment:
@@ -19,8 +20,6 @@ on:
         options:
         - dev
         - test
-env:
-  environment: ${{ inputs.environment }} or {{ dev if GITHUB_EVENT_NAME == 'push' }}
 
 jobs:
   lambda-with-terraform:
@@ -36,6 +35,9 @@ jobs:
         region: ${{ secrets.region }}
         tf_version: "1.3.6"
         envx: ${{ inputs.environment }}
+      if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+      env:
+        envx: dev
       run: |
         cd env/$envx
         echo $
