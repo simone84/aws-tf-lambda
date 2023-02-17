@@ -9,10 +9,6 @@ on:
       - 'scripts/**'
       - 'policies/**'
       - 'modules/**'
-    inputs:
-      environment:
-        default: dev
-        required: true
   workflow_dispatch:
     inputs:
       environment:
@@ -23,6 +19,8 @@ on:
         options:
         - dev
         - test
+env:
+  environment: ${{ inputs.environment }} or {{ dev if main }}
 
 jobs:
   lambda-with-terraform:
