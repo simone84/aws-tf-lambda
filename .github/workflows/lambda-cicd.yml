@@ -20,7 +20,7 @@ on:
         - dev
         - test
 env:
-  environment: ${{ inputs.environment }} or {{ dev if main }}
+  environment: ${{ inputs.environment }} or {{ dev if GITHUB_EVENT_NAME == 'push' }}
 
 jobs:
   lambda-with-terraform:
