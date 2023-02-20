@@ -2,7 +2,8 @@
     "Statement": [
         {
             "Action": [
-                "s3:ListBucket"
+                "s3:ListBucket",
+                "s3:ListBucketVersions"
             ],
             "Effect": "Allow",
             "Resource": "*"
