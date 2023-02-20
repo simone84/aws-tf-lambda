@@ -51,7 +51,9 @@ ${env}_${lambda_name}
 
 ### CUSTOMISATION: ###
 ```
-!!! Every modify in the module or TFVAR can affect all the functions in each environment !!!
+!!! Every modify in the module can affect all the functions in each environment !!!
+
+!!! Every modify in the TFVAR can affect all the functions in the related environment !!!
 ```
 - Module Calling (to customise a lambda only)
 
@@ -78,6 +80,7 @@ ${env}_${lambda_name}
 
 * to update the TF Varsion amend the env var "tf_version"
 * to update the env list amend the choise list
+* if the default environment is not dev change it in the if condition (first command)
 
 - GH Secrets
 
