@@ -12,7 +12,7 @@ else
 fi
 
 echo "" >> env/${env}/lambda.tf; echo "" >> env/${env}/lambda.tf
-sed "s/XXX_LAMBDA_NAME_XXX/$lambda_name/g" templates/lambda_ondemand.tpl >> env/${env}/lambda.tf
+sed "s/XXX_LAMBDA_NAME_XXX/$lambda_name/g" templates/lambda.tpl >> env/${env}/lambda.tf
 
 if [[ $env == "dev" ]]; then
   cp -p templates/script.tpl scripts/${lambda_name}.py

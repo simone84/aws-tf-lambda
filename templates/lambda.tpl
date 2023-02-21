@@ -1,7 +1,7 @@
 // LAMBDA NAME: XXX_LAMBDA_NAME_XXX //
 
 module "lambda-XXX_LAMBDA_NAME_XXX" {
-  source = "../../modules/lambda-ondemand"
+  source = "../../modules/lambda"
 
   env = var.env
   lambda_name = "XXX_LAMBDA_NAME_XXX"
