@@ -18,6 +18,7 @@ if [ $CODE -eq 0 ]; then
     ./terraform state list
 elif [ $CODE -eq 1 ]; then
     echo "### There is an issue planning ###"
+    exit 1
 elif [ $CODE -eq 2 ]; then
     echo "########## TF APPLY ##########"
     ./terraform apply -var-file=../../tfvars/$envx.tfvars -auto-approve
