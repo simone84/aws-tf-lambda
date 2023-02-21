@@ -1,15 +1,18 @@
-## New Lambda function ##
+## New Python Lambda function ##
 
-- Run the new_lambda script adding the lambda_name as parameter
+- Run the new_lambda script adding the lambda_name as parameter and the env
 ```
 # Please use underscore for naming convention #
-./new_lambda.sh ec2_pub_ips
+# You need to run the script first on dev, then on other envs
+# if the first env is not dev you need to amend the script
+./new_lambda.sh ec2_pub_ips dev
 ```
 - Edit your python script and the necessary policy
 - Run terraform init/plan for testing
 ```
-terraform init
-terraform plan -var-file=../../tfvars/dev.tfvars
+cd env/${env}
+terraform init -backend-config="bucket=${bucket}" -backend-config="key=${environment}/terraform-lambda.state" -backend-config="region=${region}"
+terraform plan -var-file=../../tfvars/${env}.tfvars
 ```
 - PR, get it approved and merge on the main branch
 - The Action will run automatically for dev modifies
@@ -48,6 +51,8 @@ ${env}_${lambda_name}
 - [X] Include the lambda role in the module
 - [X] GH Action parameterised and split the state (by env) during the building
 - [X] Building script to generate the tf code automatically
+- [X] Split lambda and main tf files
+- [X] Combined workflow
 
 ### CUSTOMISATION: ###
 ```
