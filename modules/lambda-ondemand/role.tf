@@ -15,8 +15,10 @@ resource "aws_iam_role" "lambda_ondemand" {
 
   inline_policy {
     name = "my_inline_policy"
-    policy = file("../../policies/${var.lambda_name}.json")
+    policy = file("../../policies/${var.policy_name}.json")
 
   }
   
 }
+
+variable "policy_name" {}

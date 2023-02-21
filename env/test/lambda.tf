@@ -5,5 +5,6 @@ module "lambda-instances_id" {
 
   env = var.env
   lambda_name = "instances_id"
+  policy_name = "instances_id"
   python_v = var.python_v
 }

@@ -5,6 +5,9 @@
 # Please use underscore for naming convention #
 # You need to run the script first on dev, then on other envs
 # if the first env is not dev you need to amend the script
+# if you need a customised multi-env policy, please rename it and amend the mudule calling ex:
+# "dev_ec2_pub_ips.json", and in the module block "policy_name = dev_ec2_pub_ips"
+
 ./new_lambda.sh ec2_pub_ips dev
 ```
 - Edit your python script and the necessary policy
@@ -18,6 +21,7 @@ terraform plan -var-file=../../tfvars/${env}.tfvars
 - The Action will run automatically for dev modifies
 ```
 Modifies on the following path will make the workflow run automatically:
+* This will push developer to merge changes in dev ASAP
 
 - 'env/dev/**'
 - 'scripts/**'
@@ -53,6 +57,7 @@ ${env}_${lambda_name}
 - [X] Building script to generate the tf code automatically
 - [X] Split lambda and main tf files
 - [X] Combined workflow
+- [X] Multi-env policy module
 
 ### CUSTOMISATION: ###
 ```
@@ -66,6 +71,7 @@ ${env}_${lambda_name}
 | ----------- | -------- | ------------- | ----------------------------------- |
 | env         | true     | null          | set only on the tfvars              |
 | lambda_name | true     | null          | read naming convention rules        |
+| policy_name | true     | null          | read policy convention rules        |
 | python_v    | true     | null          | setup only if different from tfvars |
 | timeout     | false    | 10            | lambda timeout                      |
 

@@ -5,6 +5,7 @@ module "lambda-instances_id" {
 
   env = var.env
   lambda_name = "instances_id"
+  policy_name = "instances_id"
   python_v = var.python_v
 }
 
@@ -15,5 +16,6 @@ module "lambda-list_buckets" {
 
   env = var.env
   lambda_name = "list_buckets"
+  policy_name = "list_buckets"
   python_v = var.python_v
 }
