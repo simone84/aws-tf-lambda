@@ -3,7 +3,7 @@
 set -e
 
 TFSTATE_KEY=$envx/terraform-lambda.state
-wget https://releases.hashicorp.com/terraform/${tfversion}/terraform_${tfversion}_linux_amd64.zip
+wget https://releases.hashicorp.com/terraform/${tfversion}/terraform_${tfversion}_linux_amd64.zip --no-show-progress
 unzip terraform_${tfversion}_linux_amd64.zip
 echo "########## TF INIT ##########"  
 ./terraform init -backend-config="bucket=${bucket}"  -backend-config="key=${TFSTATE_KEY}" -backend-config="region=${region}"
