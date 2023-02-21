@@ -102,7 +102,7 @@ ${env}_${lambda_name}
 - [X] Combined workflow
 - [X] Multi-env policy module
 - [X] Lambda-scheduled-by-CW Module
-- [] Generic module and reimporting
+- [X] Generic module and reimporting
 - [] lambda_name for map
 
 ## How To edit the state file ##
