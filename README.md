@@ -50,15 +50,6 @@ ${env}_${lambda_name}
 ### EXTRA: ###
 - The policy won't be available for additional resources being inline and built in the role
 
-### TBD, WIP, and DONE ###
-- [X] Inline policy as json file 
-- [X] Include the lambda role in the module
-- [X] GH Action parameterised and split the state (by env) during the building
-- [X] Building script to generate the tf code automatically
-- [X] Split lambda and main tf files
-- [X] Combined workflow
-- [X] Multi-env policy module
-
 ### CUSTOMISATION: ###
 ```
 !!! Every modify in the module can affect all the functions in each environment !!!
@@ -101,3 +92,36 @@ ${env}_${lambda_name}
 | aws_secret_access_key | true     | aws secret_key       |
 | bucket                | true     | s3 bucket state file |
 | region                | true     | s3 bucket region     |
+
+## TBD, WIP, and DONE ##
+- [X] Inline policy as json file 
+- [X] Include the lambda role in the module
+- [X] GH Action parameterised and split the state (by env) during the building
+- [X] Building script to generate the tf code automatically
+- [X] Split lambda and main tf files
+- [X] Combined workflow
+- [X] Multi-env policy module
+- [X] Lambda-scheduled-by-CW Module
+- [] Generic module and reimporting
+- [] lambda_name for map
+
+## How To edit the state file ##
+* Not often is possible to recreate resources
+* Even changing the resource name will trigger a rebuilding
+```
+# Run state list and take note of the resources to be changed #
+terraform state list
+
+# we will rename the following 2 resources from ondemand to a generic name python3
+# module.lambda-list_buckets.aws_lambda_function.ondemand
+# module.lambda-list_buckets.aws_iam_role.lambda_ondemand
+
+terraform state mv module.lambda-list_buckets.aws_lambda_function.ondemand module.lambda-list_buckets.aws_lambda_function.python3
+terraform state mv module.lambda-list_buckets.aws_iam_role.lambda_ondemand module.lambda-list_buckets.aws_iam_role.lambda_python3
+
+# output should be like:
+Move "module.lambda-instances_id.aws_iam_role.lambda_ondemand" to "module.lambda-instances_id.aws_iam_role.lambda_python3"
+Successfully moved 1 object(s).
+
+# if you plan now, no resources will be marked for changes. Well done!
+```
