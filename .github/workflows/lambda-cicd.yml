@@ -9,6 +9,7 @@ on:
       - 'scripts/**'
       - 'policies/**'
       - 'modules/**'
+      - 'tfvars/dev/**'
 
   workflow_dispatch:
     inputs:

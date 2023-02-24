@@ -1,22 +1,32 @@
 resource "aws_cloudwatch_event_rule" "scheduled_function" {
-  count = var.cw_scheduler ? 1 : 0
-  name                  = "run-lambda-function"
+  # for_each = var.cw_scheduler == true ? toset([var.lambda_name]) : ([])
+  for_each = {
+    for k, v in var.lambda_name : k => v
+    if var.cw_scheduler
+  }
+  name                  = "run-lambda-function-${each.key}"
   description           = "Schedule lambda function"
   schedule_expression   = var.schedule
 }
 
 resource "aws_cloudwatch_event_target" "scheduled_function" {
-  count = var.cw_scheduler ? 1 : 0
+  for_each = {
+    for k, v in var.lambda_name : k => v
+    if var.cw_scheduler
+  }
   target_id = "lambda-function-target"
-  rule      = element(aws_cloudwatch_event_rule.scheduled_function.*.name, 0)
-  arn       = aws_lambda_function.python3.arn
+  rule      = aws_cloudwatch_event_rule.scheduled_function[each.key].name
+  arn       = aws_lambda_function.python3[each.key].arn
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch" {
-  count = var.cw_scheduler ? 1 : 0
+  for_each = {
+    for k, v in var.lambda_name : k => v
+    if var.cw_scheduler
+  }
   statement_id = "AllowExecutionFromCloudWatch"
   action = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.python3.function_name
+  function_name = aws_lambda_function.python3[each.key].function_name
   principal = "events.amazonaws.com"
-  source_arn = element(aws_cloudwatch_event_rule.scheduled_function.*.arn, 0)
+  source_arn = aws_cloudwatch_event_rule.scheduled_function[each.key].arn
 }

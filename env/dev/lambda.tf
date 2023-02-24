@@ -1,21 +1,30 @@
-// LAMBDA NAME: instances_id //
+// LAMBDAS - ONDEMAND //
 
-module "lambda-instances_id" {
+module "lambdas-ondemand" {
   source = "../../modules/lambda"
 
   env = var.env
-  lambda_name = "instances_id"
-  policy_name = "instances_id"
+  lambda_name = var.lambda_od
+  policy_name = var.lambda_od
   python_v = var.python_v
 }
 
-// LAMBDA NAME: list_buckets //
+// LAMBDAS - SCHEDULED //
 
-module "lambda-list_buckets" {
-  source = "../../modules/lambda"
+# module "lambdas-scheduled" {
+#   source = "../../modules/lambda"
 
-  env = var.env
-  lambda_name = "list_buckets"
-  policy_name = "list_buckets"
-  python_v = var.python_v
+#   env = var.env
+#   lambda_name = var.lambda_sc
+#   policy_name = var.lambda_sc
+#   cw_scheduler = true
+#   python_v = var.python_v
+# }
+
+variable "lambda_od" {
+  type = map
 }
+
+# variable "lambda_sc" {
+#   type = map
+# }

@@ -11,13 +11,16 @@ else
   exit 1
 fi
 
-echo "" >> env/${env}/lambda.tf; echo "" >> env/${env}/lambda.tf
-sed "s/XXX_LAMBDA_NAME_XXX/$lambda_name/g" templates/lambda.tpl >> env/${env}/lambda.tf
-
 if [[ $env == "dev" ]]; then
   cp -p templates/script.tpl scripts/${lambda_name}.py
   cp templates/policy.tpl policies/${lambda_name}.json
   ls -l scripts/${lambda_name}.py ; ls -l policies/${lambda_name}.json
 fi
 
-echo "env/${env}/lambda.tf file updated"
+echo "Remember to update tfvars/${env}.tfvars file"
+echo "  ${lambda_name}" = ${lambda_name}" "
+echo "lambda_od map is for lambdas to run on demand"
+echo "lambda_sc map is for scheduled by CW lambdas"
+echo "The Key is the lambda name and the value is the policy name"
+echo "If the policy name is split by environment ex:"
+echo "${env}_${lambda_name} remember to change the value and the to rename the policy"

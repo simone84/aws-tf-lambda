@@ -1,10 +1,14 @@
-// LAMBDA NAME: instances_id //
+// LAMBDA ONDEMAND //
 
-module "lambda-instances_id" {
+module "lambdas-ondemand" {
   source = "../../modules/lambda"
 
   env = var.env
-  lambda_name = "instances_id"
-  policy_name = "instances_id"
+  lambda_name = var.lambda_od
+  policy_name = var.lambda_od
   python_v = var.python_v
+}
+
+variable "lambda_od" {
+  type = map
 }
