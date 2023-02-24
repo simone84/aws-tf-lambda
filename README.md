@@ -27,6 +27,7 @@ Modifies on the following path will make the workflow run automatically:
 - 'scripts/**'
 - 'policies/**'
 - 'modules/**'
+- 'tfvars/dev/**'
 ```
 
 - Apply the change running the action selecting the environemnt
@@ -34,17 +35,24 @@ Modifies on the following path will make the workflow run automatically:
 ### After the build: ###
 
 Terraform will create 2 resources and 2 data for each lambda:
-module.lambda-instances_id.data.archive_file.python_lambda_package
-module.lambda-instances_id.data.aws_iam_policy_document.lambda_assume_role_policy
-module.lambda-instances_id.aws_iam_role.lambda_ondemand
-module.lambda-instances_id.aws_lambda_function.ondemand
 
+```
+module.lambdas-ondemand.data.archive_file.python_lambda_package["instances_id"]
+module.lambdas-ondemand.data.aws_iam_policy_document.lambda_assume_role_policy
+module.lambdas-ondemand.aws_iam_role.lambda_python3["instances_id"]
+module.lambdas-ondemand.aws_lambda_function.python3["instances_id"]
+```
 The name of the role and the function will be:
-
 ```
 lambdaRole_${env}_${lambda_name}
 
 ${env}_${lambda_name}
+```
+if the scheduler is enabled also:
+```
+module.lambdas-ondemand.aws_cloudwatch_event_rule.scheduled_function["instances_id"]
+module.lambdas-ondemand.aws_cloudwatch_event_target.scheduled_function["instances_id"]
+module.lambdas-ondemand.aws_lambda_permission.allow_cloudwatch["instances_id"]
 ```
 
 ### EXTRA: ###
@@ -56,23 +64,25 @@ ${env}_${lambda_name}
 
 !!! Every modify in the TFVAR can affect all the functions in the related environment !!!
 ```
-- Module Calling (to customise a lambda only)
+- Module Calling (to customise the lambda with the same trigger only)
 
-| Parameter   | Required | Default Value | Description                         |
-| ----------- | -------- | ------------- | ----------------------------------- |
-| env         | true     | null          | set only on the tfvars              |
-| lambda_name | true     | null          | read naming convention rules        |
-| policy_name | true     | null          | read policy convention rules        |
-| python_v    | true     | null          | setup only if different from tfvars |
-| timeout     | false    | 10            | lambda timeout                      |
+| Parameter   | Type  | Required | Default Value | Description                         |
+| ----------- | ----- | -------- | ------------- | ----------------------------------- |
+| env         | true  | true     | null          | set only on the tfvars              |
+| policy_name | true  | true     | null          | read policy convention rules        |
+| python_v    | true  | true     | null          | setup only if different from tfvars |
+| timeout     | false | false    | 10            | lambda timeout                      |
+| scheduler   | bool  | false    | true          | to enable CW scheduler              |
 
 - TFVARS (to customise an entire environment)
 
-| Parameter  | Required | Default Value | Description                             |
-| ---------- | -------- | ------------- | --------------------------------------- |
-| env        | true     | null          | give the prefix on role and lambda name |
-| aws_region | true     | null          | region where build resources            |
-| python_v   | true     | null          | python version                          |
+| Parameter  | Type   | Required | Default Value | Description                             |
+| ---------- | ------ | -------- | ------------- | --------------------------------------- |
+| env        | string | true     | null          | give the prefix on role and lambda name |
+| aws_region | string | true     | null          | region where build resources            |
+| python_v   | string | true     | null          | python version                          |
+| lambda_od  | map    | true     | null          | on demand lambda, follow req.           |
+| lambda_sc  | map    | true     | null          |                                         |
 
 - GH Workflow (to setup/customise the shared workflow)
 
@@ -103,7 +113,8 @@ ${env}_${lambda_name}
 - [X] Multi-env policy module
 - [X] Lambda-scheduled-by-CW Module
 - [X] Generic module and reimporting
-- [] lambda_name for map
+- [X] Lambda names and policy in a map
+- [ ] Scheduling with multiple choice 
 
 ## How To edit the state file ##
 * Not often is possible to recreate resources
@@ -112,7 +123,7 @@ ${env}_${lambda_name}
 # Run state list and take note of the resources to be changed #
 terraform state list
 
-# we will rename the following 2 resources from ondemand to a generic name python3
+# below we will rename the following 2 resources from ondemand to a generic name python3
 # module.lambda-list_buckets.aws_lambda_function.ondemand
 # module.lambda-list_buckets.aws_iam_role.lambda_ondemand
 
@@ -124,4 +135,36 @@ Move "module.lambda-instances_id.aws_iam_role.lambda_ondemand" to "module.lambda
 Successfully moved 1 object(s).
 
 # if you plan now, no resources will be marked for changes. Well done!
+
+# below we will move the following 2 resources from 2 different modules incaplsuling resources in a map
+# this is a perfect example when you move to for_each loops
+
+terraform state mv module.lambda-list_buckets.aws_iam_role.lambda_python3 'module.lambdas-ondemand.aws_iam_role.lambda_python3["list_buckets"]'
+terraform state mv module.lambda-list_buckets.aws_lambda_function.python3 'module.lambdas-ondemand.aws_lambda_function.python3["list_buckets"]'
+
+# if you plan now, no resources will be marked for changes. Well done!
+# run a dry terrafrom apply to let terraform to reindex the data resources in a different module
+```
+
+## Move from Counter to for Each
+
+* Check out PR:
+https://github.com/simone84/aws-tf-lambda/pull/5
+
+```
+# the counter ex:
+count = var.cw_scheduler ? 1 : 0
+# and the interpolation:
+rule = element(aws_cloudwatch_event_rule.scheduled_function.*.name, 0)
+source_arn = element(aws_cloudwatch_event_rule.scheduled_function.*.arn, 0)
+
+# is getting obsolete and we move on for_each with more flexibility
+
+for_each = var.cw_scheduler == true ? toset([var.lambda_name]) : ([])
+# works to enable the resource creation with a provided array
+
+# in this case we need to call for inside for_each because we have a map of key/values
+name = "run-lambda-function-${each.key}"
+rule = aws_cloudwatch_event_rule.scheduled_function[each.key].name
+# etc.
 ```
