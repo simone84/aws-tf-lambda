@@ -11,20 +11,20 @@ module "lambdas-ondemand" {
 
 // LAMBDAS - SCHEDULED //
 
-# module "lambdas-scheduled" {
-#   source = "../../modules/lambda"
+module "lambdas-scheduled" {
+  source = "../../modules/lambda"
 
-#   env = var.env
-#   lambda_name = var.lambda_sc
-#   policy_name = var.lambda_sc
-#   cw_scheduler = true
-#   python_v = var.python_v
-# }
+  env = var.env
+  lambda_name = var.lambda_sc
+  policy_name = var.lambda_sc
+  cw_scheduler = true
+  python_v = var.python_v
+}
 
 variable "lambda_od" {
   type = map
 }
 
-# variable "lambda_sc" {
-#   type = map
-# }
+variable "lambda_sc" {
+  type = map
+}

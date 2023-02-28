@@ -7,6 +7,6 @@ lambda_od = {
   "list_buckets" = "list_buckets"
 }
 
-# lambda_sc = {
+lambda_sc = {
 
-# }
+}
