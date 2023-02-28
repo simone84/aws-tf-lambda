@@ -10,16 +10,14 @@ data "aws_iam_policy_document" "lambda_assume_role_policy"{
 }
 
 resource "aws_iam_role" "lambda_python3" {
-  for_each           = var.lambda_name  
-  name               = "lambdaRole_${var.env}_${each.key}"
+  for_each           = var.lambda  
+  name               = "lambdaRole_${var.env}_${each.value["name"]}"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
 
   inline_policy {
     name = "my_inline_policy"
-    policy = file("../../policies/${each.value}.json")
+    policy = file("../../policies/${each.value["policy"]}.json")
 
   }
   
 }
-
-variable "policy_name" {}
