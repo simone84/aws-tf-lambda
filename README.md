@@ -66,23 +66,23 @@ module.lambdas-ondemand.aws_lambda_permission.allow_cloudwatch["instances_id"]
 ```
 - Module Calling (to customise the lambda with the same trigger only)
 
-| Parameter   | Type  | Required | Default Value | Description                         |
-| ----------- | ----- | -------- | ------------- | ----------------------------------- |
-| env         | true  | true     | null          | set only on the tfvars              |
-| policy_name | true  | true     | null          | read policy convention rules        |
-| python_v    | true  | true     | null          | setup only if different from tfvars |
-| timeout     | false | false    | 10            | lambda timeout                      |
-| scheduler   | bool  | false    | true          | to enable CW scheduler              |
+| Parameter | Type  | Required | Default Value | Description                         |
+| --------- | ----- | -------- | ------------- | ----------------------------------- |
+| env       | true  | true     | null          | set only on the tfvars              |
+| lambda    | true  | true     | null          | setup on tfvars                     |
+| python_v  | true  | true     | null          | setup only if different from tfvars |
+| timeout   | false | false    | 10            | lambda timeout                      |
+| scheduler | bool  | false    | true          | to enable CW scheduler              |
 
 - TFVARS (to customise an entire environment)
 
-| Parameter  | Type   | Required | Default Value | Description                             |
-| ---------- | ------ | -------- | ------------- | --------------------------------------- |
-| env        | string | true     | null          | give the prefix on role and lambda name |
-| aws_region | string | true     | null          | region where build resources            |
-| python_v   | string | true     | null          | python version                          |
-| lambda_od  | map    | true     | null          | on demand lambda, follow req.           |
-| lambda_sc  | map    | true     | null          |                                         |
+| Parameter  | Type        | Required | Default Value | Description                             |
+| ---------- | ----------- | -------- | ------------- | --------------------------------------- |
+| env        | string      | true     | null          | give the prefix on role and lambda name |
+| aws_region | string      | true     | null          | region where build resources            |
+| python_v   | string      | true     | null          | python version                          |
+| lambda_od  | map(object) | true     | null          | on demand lambda, follow req.           |
+| lambda_sc  | map(object) | true     | null          | scheduled lmabda, follow req.           |
 
 - GH Workflow (to setup/customise the shared workflow)
 
@@ -114,7 +114,8 @@ module.lambdas-ondemand.aws_lambda_permission.allow_cloudwatch["instances_id"]
 - [X] Lambda-scheduled-by-CW Module
 - [X] Generic module and reimporting
 - [X] Lambda names and policy in a map
-- [ ] Scheduling with multiple choice 
+- [X] Schedule as parameter
+- [X] Lambda as map of objects 
 
 ## How To edit the state file ##
 * Not often is possible to recreate resources
@@ -146,7 +147,7 @@ terraform state mv module.lambda-list_buckets.aws_lambda_function.python3 'modul
 # run a dry terrafrom apply to let terraform to reindex the data resources in a different module
 ```
 
-## Move from Counter to for Each
+## Move from Counter to for_each (map) ##
 
 * Check out PR:
 https://github.com/simone84/aws-tf-lambda/pull/5
@@ -163,8 +164,35 @@ source_arn = element(aws_cloudwatch_event_rule.scheduled_function.*.arn, 0)
 for_each = var.cw_scheduler == true ? toset([var.lambda_name]) : ([])
 # works to enable the resource creation with a provided array
 
-# in this case we need to call for inside for_each because we have a map of key/values
+# in this case we need to call for inside for_each (nesting for) because we have a map of key/values
+# we can add an if condition to enable the loop when the bool var is true
+  for_each = {
+    for k, v in var.lambda : k => v
+    if var.cw_scheduler
+  }
+
 name = "run-lambda-function-${each.key}"
 rule = aws_cloudwatch_event_rule.scheduled_function[each.key].name
 # etc.
+```
+
+## Move from for_each map to map(objects) ##
+* Check PR:
+https://github.com/simone84/aws-tf-lambda/pull/6
+
+```
+# This is mainly to accomodate 3+ values for each resource because key/value strategy is not enough
+# move the lambda var map to:
+variable "lambda" {
+  type = map(object({
+    name     = string
+    policy   = string
+    schedule = string
+  }))
+}
+
+# the interaction will be similar pointing in this case on values only specifying which object ["xxx"]
+name = "run-lambda-function-${each.value["name"]}"
+schedule_expression = each.value["schedule"]
+arn = aws_lambda_function.python3[each.value.name].arn
 ```
