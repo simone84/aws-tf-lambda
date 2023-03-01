@@ -9,17 +9,10 @@ variable "cw_scheduler" {
   default = false
 }
 
-variable "schedule" {
- default = "rate(60 minutes)"
+variable "lambda" {
+  type = map(object({
+    name     = string
+    policy   = string
+    schedule = string
+  }))
 }
-variable "lambda_name" {
-  type = map
-}
-# variable "cw_scheduler" {
-#   type = map
-# }
-# variable "cw_scheduler" {
-#     type = map(object({
-#         tbc = bool
-#       }))
-#     }
