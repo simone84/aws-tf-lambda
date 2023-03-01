@@ -17,10 +17,12 @@ if [[ $env == "dev" ]]; then
   ls -l scripts/${lambda_name}.py ; ls -l policies/${lambda_name}.json
 fi
 
-echo "Remember to update tfvars/${env}.tfvars file"
-echo "  ${lambda_name}" = ${lambda_name}" "
-echo "lambda_od map is for lambdas to run on demand"
-echo "lambda_sc map is for scheduled by CW lambdas"
-echo "The Key is the lambda name and the value is the policy name"
-echo "If the policy name is split by environment ex:"
-echo "${env}_${lambda_name} remember to change the value and the to rename the policy"
+echo "Remember to update tfvars/${env}.tfvars file pasting the following output"
+echo ""
+sed "s/XXXXX/$lambda_name/g" templates/object.tpl
+echo ""; echo ""
+echo "# lambda_od map(object) is for lambdas to run on demand"
+echo "# lambda_sc map(object) is for scheduled by CW lambdas"
+echo "# If the policy name is split by environment ex:"
+echo "# ${env}_${lambda_name} remember to change the value and the to rename the policy"
+echo "# If is scheduled remember to populate the schedule value"
